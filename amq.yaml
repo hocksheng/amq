@@ -1,0 +1,159 @@
+cat custom-init/build-steps
+https://access.redhat.com/solutions/5897061
+
+
+export IMG_NAME="amq-broker-init"
+oc create secret docker-registry registry-redhat-io \
+ --docker-server=registry.redhat.io \
+ --docker-username=wliang@redhat.com \
+ --docker-password 'redhat0!!!'
+
+oc new-build --binary --name=$IMG_NAME -l app=$IMG_NAME \
+ --build-arg DB_USER=postgres \
+ --build-arg DB_PASSWORD='!!!!vhaw1234' \
+ --build-arg DB_SERVICE_IP='vhaw-database-1.coopntspsmad.us-east-1.rds.amazonaws.com' \
+ --build-arg DB_SERVICE_PORT=5432 \
+ --build-arg DB_NAME=amq_broker \
+ --env OPENSHIFT_DNS_PING_SERVICE_PORT=7800
+
+
+########################################################## POST CONFIG ########################################################
+########################################################## POST CONFIG ########################################################
+########################################################## POST CONFIG ########################################################
+
+mkdir -p config && cd config
+
+cat <<"EOF" > post-config.sh
+#!/bin/bash
+
+echo "############## Example Custom Script ###############"
+echo "##                                                ##"
+echo "##      This is an example configure script.      ##"
+echo "##                                                ##"
+echo "####################################################"
+
+echo "#### The config dir locates at ${CONFIG_INSTANCE_DIR} ####"
+ls ${CONFIG_INSTANCE_DIR}
+
+echo "#### Copying postgres jdbc driver jar to ${CONFIG_INSTANCE_DIR}/lib ####"
+cp /amq/postgres-jdbc-driver/postgresql-42.3.3.jar  ${CONFIG_INSTANCE_DIR}/lib
+
+echo "#### postgres user name ${DB_USER} password ${DB_PASSWORD}"
+echo "#### postgres service ip is ${DB_SERVICE_IP} and port is ${DB_SERVICE_PORT} ####"
+echo "#### database name: ${DB_NAME}"
+echo "#### Adding jdbc configuration to broker.xml ####"
+jdbcStore=""
+jdbcStore="${jdbcStore}<store>\n"
+jdbcStore="${jdbcStore}         <database-store>\n"
+jdbcStore="${jdbcStore}            <jdbc-driver-class-name>org.postgresql.Driver</jdbc-driver-class-name>\n"
+jdbcStore="${jdbcStore}            <jdbc-connection-url>jdbc:postgresql://${DB_SERVICE_IP}:${DB_SERVICE_PORT}/${DB_NAME}</jdbc-connection-url>\n"
+jdbcStore="${jdbcStore}            <jdbc-user>${DB_USER}</jdbc-user>\n"
+jdbcStore="${jdbcStore}            <jdbc-password>${DB_PASSWORD}</jdbc-password>\n"
+jdbcStore="${jdbcStore}            <message-table-name>MESSAGES</message-table-name>\n"
+jdbcStore="${jdbcStore}            <bindings-table-name>BINDINGS</bindings-table-name>\n"
+jdbcStore="${jdbcStore}            <large-message-table-name>LARGE_MESSAGES</large-message-table-name>\n"
+jdbcStore="${jdbcStore}            <page-store-table-name>PAGE_STORE</page-store-table-name>\n"
+jdbcStore="${jdbcStore}            <node-manager-store-table-name>NODE_MANAGER_STORE</node-manager-store-table-name>\n"
+jdbcStore="${jdbcStore}            <jdbc-lock-expiration>20000</jdbc-lock-expiration>\n"
+jdbcStore="${jdbcStore}            <jdbc-lock-renew-period>4000</jdbc-lock-renew-period>\n"
+jdbcStore="${jdbcStore}            <jdbc-network-timeout>20000</jdbc-network-timeout>\n"
+jdbcStore="${jdbcStore}         </database-store>\n"
+jdbcStore="${jdbcStore}      </store>\n\n"
+
+ESCAPED_REPLACE=$(printf '%s\n' "$jdbcStore" | sed -e 's/[&]/\\&/g')
+echo  $ESCAPED_REPLACE
+
+
+#sed -i "s|<persistence-enabled>|${jdbcStore}      <persistence-enabled>|g" ${CONFIG_INSTANCE_DIR}/etc/broker.xml
+sed -i "s|<persistence-enabled>|${ESCAPED_REPLACE}     <persistence-enabled>|g" ${CONFIG_INSTANCE_DIR}/etc/broker.xml
+
+echo "#### Custom config done. ####"
+EOF
+chmod -R 777 post-config.sh
+cd ..
+
+########################################################## DOWNLOAD JDBC POSTGRES  ########################################################
+########################################################## DOWNLOAD JDBC POSTGRES  ########################################################
+########################################################## DOWNLOAD JDBC POSTGRES  ########################################################
+
+mkdir -p postgres-jdbc-driver/
+
+if [[ ! -f "postgres-jdbc-driver/postgresql-42.3.3.jar" ]]; then
+    echo "Downloading jdbc driver ..."
+    curl https://jdbc.postgresql.org/download/postgresql-42.3.3.jar \
+     --output postgres-jdbc-driver/postgresql-42.3.3.jar
+fi
+
+
+########################################################## DOKCER FILE  ########################################################
+########################################################## DOKCER FILE  ########################################################
+########################################################## DOKCER FILE  ########################################################
+
+cat <<EOF > Dockerfile
+FROM registry.redhat.io/amq7/amq-broker-init-rhel8@sha256:3b78e7ced2a3523642981353158f05d21fabf4233a6218688925fa43cdba1a1f
+ADD postgres-jdbc-driver /amq/postgres-jdbc-driver
+ADD config /amq/scripts
+
+RUN ls /amq
+RUN ls /amq/postgres-jdbc-driver
+RUN ls /amq/scripts
+
+ARG DB_USER
+ARG DB_PASSWORD
+ARG DB_SERVICE_IP
+ARG DB_SERVICE_PORT
+ARG DB_NAME
+
+ENV DB_USER=${DB_USER}
+ENV DB_PASSWORD=${DB_PASSWORD}
+ENV DB_SERVICE_IP=${DB_SERVICE_IP}
+ENV DB_SERVICE_PORT=${DB_SERVICE_PORT}
+ENV DB_NAME=${DB_NAME}
+
+RUN echo DB_USER: ${DB_USER}
+RUN echo DB_PASSWORD: ${DB_PASSWORD}
+RUN echo DB_SERVICE_IP: ${DB_SERVICE_IP}
+RUN echo DB_SERVICE_PORT: ${DB_SERVICE_PORT}
+RUN echo DB_NAME: ${DB_NAME}
+
+EOF
+
+##################################################### BUILD IMAGE #####################################################
+##################################################### BUILD IMAGE #####################################################
+##################################################### BUILD IMAGE #####################################################
+
+oc patch bc/$IMG_NAME -p '{"spec":{"strategy":{"dockerStrategy":{"dockerfilePath":"Dockerfile"}}}}'
+oc set build-secret --pull bc/$IMG_NAME registry-redhat-io
+oc start-build $IMG_NAME --from-dir=. --follow
+
+
+
+
+
+################################################### CREATE APPLY CR ###################################################
+################################################### CREATE APPLY CR ###################################################
+################################################### CREATE APPLY CR ###################################################
+cat <<EOF  > amq-cr.yaml
+apiVersion: broker.amq.io/v2alpha4
+kind: ActiveMQArtemis
+metadata:
+  name: broker
+spec:
+  deploymentPlan:
+    size: 1
+    image: image-registry.openshift-image-registry.svc:5000/vhaw-cicd/amq-broker-init@sha256:asdfadsf12354123589q27356
+    initImage: image-registry.openshift-image-registry.svc:5000/vhaw-cicd/amq-broker-init@sha256:asdfadsf12354123589q27356
+
+EOF
+
+IMAGE=image-registry.openshift-image-registry.svc:5000/vhaw-cicd/amq-broker-init@sha256:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+sed -i "s|image:.*|image: ${IMAGE}|g; s|initImage:.*|initImage: ${IMAGE}|g" amq-cr.yaml
+
+
+
+
+
+oc apply -f amq-cr.yaml
+
+#oc set env statefulset broker-ss OPENSHIFT_DNS_PING_SERVICE_PORT=7800
+
