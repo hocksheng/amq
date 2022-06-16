@@ -1,0 +1,17 @@
+sudo restorecon -R -v /var/lib/mongo
+sudo chcon -Rv -u system_u -t mongod_var_lib_t /var/lib/mongo
+sudo semanage fcontext -a -t mongod_var_lib_t /var/lib/mongo.*
+
+yum localinstall -y /tmp/mongo-db-repo/*
+systemctl start mongod
+systemctl stop mongod
+
+pvcreate /dev/sdb1
+vgcreate vg_mongodb /dev/sdb1
+lvcreate -n lv_mongodb -l 100%FREE /dev/vg_mongodb
+mkfs.xfs /dev/vg_mongodb/lv_mongodb
+mkdir /backup && mount /dev/vg_mongodb/lv_mongodb /backup
+rsync -azh /var/lib/mongo/* /backup/
+umount /backup
+mount /dev/vg_mongodb/lv_mongodb /var/lib/mongo  
+/dev/vg_mongodb/lv_mongodb                /var/lib/mongo          xfs     defaults        1 2
