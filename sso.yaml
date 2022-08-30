@@ -1,0 +1,495 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "openshift-sdn",
+            "interface": "eth0",
+            "ips": [
+                "172.102.4.163"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+      k8s.v1.cni.cncf.io/networks-status: |-
+        [{
+            "name": "openshift-sdn",
+            "interface": "eth0",
+            "ips": [
+                "172.102.4.163"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+      kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu, memory request for
+        container sso74-openshift-rhel8-custom; cpu, memory limit for container sso74-openshift-rhel8-custom'
+      openshift.io/generated-by: OpenShiftWebConsole
+      openshift.io/scc: restricted
+    creationTimestamp: "2022-07-11T12:16:19Z"
+    generateName: sso74-openshift-rhel8-custom-844cc65d4f-
+    labels:
+      app: sso74-openshift-rhel8-custom
+      deploymentconfig: sso74-openshift-rhel8-custom
+      pod-template-hash: 844cc65d4f
+    name: sso74-openshift-rhel8-custom-844cc65d4f-sgqrh
+    namespace: test-sso74
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: sso74-openshift-rhel8-custom-844cc65d4f
+      uid: ffe1fc5f-4237-43cb-b24f-daa6e8cb837c
+    resourceVersion: "37709218"
+    uid: 00a3b8b2-5d29-44fd-b5b7-e13edbc74532
+  spec:
+    containers:
+    - env:
+      - name: sso_admin_username
+        value: admin
+      - name: sso_admin_password
+        value: redhat
+      image: image-registry.openshift-image-registry.svc:5000/openshift/sso74-openshift-rhel8-custom@sha256:af2b34d13f26232287c5409382fef5a528c5fc6855df48cf35124553b77f24bf
+      imagePullPolicy: IfNotPresent
+      name: sso74-openshift-rhel8-custom
+      ports:
+      - containerPort: 8080
+        protocol: TCP
+      - containerPort: 8443
+        protocol: TCP
+      - containerPort: 8778
+        protocol: TCP
+      resources:
+        limits:
+          cpu: 300m
+          memory: 200Mi
+        requests:
+          cpu: 200m
+          memory: 200Mi
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+        runAsUser: 1000870000
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-xb8b9
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    imagePullSecrets:
+    - name: default-dockercfg-pqhqf
+    nodeName: myutvlxaosiw03.nonprod-osi.ambg.com.my
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000870000
+      seLinuxOptions:
+        level: s0:c30,c0
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    volumes:
+    - name: kube-api-access-xb8b9
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+        - configMap:
+            items:
+            - key: service-ca.crt
+              path: service-ca.crt
+            name: openshift-service-ca.crt
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2022-07-11T12:16:19Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2022-07-11T12:18:25Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2022-07-11T12:18:25Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2022-07-11T12:16:19Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: cri-o://8283e8ac3a6c6df8fae9e30aa1fd328b040cb36ddc349af856efdb1580570972
+      image: image-registry.openshift-image-registry.svc:5000/openshift/sso74-openshift-rhel8-custom@sha256:af2b34d13f26232287c5409382fef5a528c5fc6855df48cf35124553b77f24bf
+      imageID: image-registry.openshift-image-registry.svc:5000/openshift/sso74-openshift-rhel8-custom@sha256:af2b34d13f26232287c5409382fef5a528c5fc6855df48cf35124553b77f24bf
+      lastState:
+        terminated:
+          containerID: cri-o://cfb96a2383d516f152b3ae26ec4efdab9c2b5892c78aebed1831a415e4d7469b
+          exitCode: 127
+          finishedAt: "2022-07-11T12:18:24Z"
+          reason: OOMKilled
+          startedAt: "2022-07-11T12:16:21Z"
+      name: sso74-openshift-rhel8-custom
+      ready: true
+      restartCount: 1
+      started: true
+      state:
+        running:
+          startedAt: "2022-07-11T12:18:25Z"
+    hostIP: 10.123.144.73
+    phase: Running
+    podIP: 172.102.4.163
+    podIPs:
+    - ip: 172.102.4.163
+    qosClass: Burstable
+    startTime: "2022-07-11T12:16:19Z"
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: "2022-07-11T12:15:29Z"
+    labels:
+      app: sso74-openshift-rhel8-custom
+      app.kubernetes.io/component: sso74-openshift-rhel8-custom
+      app.kubernetes.io/instance: sso74-openshift-rhel8-custom
+      app.kubernetes.io/name: sso74-openshift-rhel8-custom
+      app.kubernetes.io/part-of: sso74-openshift-rhel8-custom-app
+    name: sso74-openshift-rhel8-custom
+    namespace: test-sso74
+    resourceVersion: "37707139"
+    uid: ac6796f7-c9e4-4c98-b3df-785c5e1d9245
+  spec:
+    clusterIP: 192.171.15.51
+    clusterIPs:
+    - 192.171.15.51
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: 8443-tcp
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+    - name: 8778-tcp
+      port: 8778
+      protocol: TCP
+      targetPort: 8778
+    selector:
+      app: sso74-openshift-rhel8-custom
+      deploymentconfig: sso74-openshift-rhel8-custom
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      alpha.image.policy.openshift.io/resolve-names: '*'
+      app.openshift.io/route-disabled: "false"
+      deployment.kubernetes.io/revision: "2"
+      image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"sso74-openshift-rhel8-custom:7.4","namespace":"openshift"},"fieldPath":"spec.template.spec.containers[?(@.name==\"sso74-openshift-rhel8-custom\")].image","pause":"false"}]'
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: "2022-07-11T12:15:29Z"
+    generation: 2
+    labels:
+      app: sso74-openshift-rhel8-custom
+      app.kubernetes.io/component: sso74-openshift-rhel8-custom
+      app.kubernetes.io/instance: sso74-openshift-rhel8-custom
+      app.kubernetes.io/name: sso74-openshift-rhel8-custom
+      app.kubernetes.io/part-of: sso74-openshift-rhel8-custom-app
+      app.openshift.io/runtime: sso74-openshift-rhel8-custom
+      app.openshift.io/runtime-namespace: openshift
+      app.openshift.io/runtime-version: "7.4"
+    name: sso74-openshift-rhel8-custom
+    namespace: test-sso74
+    resourceVersion: "37709223"
+    uid: 3c8eb8de-377d-4073-b305-6fc141b20767
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: sso74-openshift-rhel8-custom
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftWebConsole
+        creationTimestamp: null
+        labels:
+          app: sso74-openshift-rhel8-custom
+          deploymentconfig: sso74-openshift-rhel8-custom
+      spec:
+        containers:
+        - env:
+          - name: sso_admin_username
+            value: admin
+          - name: sso_admin_password
+            value: redhat
+          image: image-registry.openshift-image-registry.svc:5000/openshift/sso74-openshift-rhel8-custom@sha256:af2b34d13f26232287c5409382fef5a528c5fc6855df48cf35124553b77f24bf
+          imagePullPolicy: IfNotPresent
+          name: sso74-openshift-rhel8-custom
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          - containerPort: 8443
+            protocol: TCP
+          - containerPort: 8778
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2022-07-11T12:15:29Z"
+      lastUpdateTime: "2022-07-11T12:16:22Z"
+      message: ReplicaSet "sso74-openshift-rhel8-custom-844cc65d4f" has successfully
+        progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2022-07-11T12:18:25Z"
+      lastUpdateTime: "2022-07-11T12:18:25Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 2
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      alpha.image.policy.openshift.io/resolve-names: '*'
+      app.openshift.io/route-disabled: "false"
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "2"
+      image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"sso74-openshift-rhel8-custom:7.4","namespace":"openshift"},"fieldPath":"spec.template.spec.containers[?(@.name==\"sso74-openshift-rhel8-custom\")].image","pause":"false"}]'
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: "2022-07-11T12:16:19Z"
+    generation: 1
+    labels:
+      app: sso74-openshift-rhel8-custom
+      deploymentconfig: sso74-openshift-rhel8-custom
+      pod-template-hash: 844cc65d4f
+    name: sso74-openshift-rhel8-custom-844cc65d4f
+    namespace: test-sso74
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: sso74-openshift-rhel8-custom
+      uid: 3c8eb8de-377d-4073-b305-6fc141b20767
+    resourceVersion: "37709221"
+    uid: ffe1fc5f-4237-43cb-b24f-daa6e8cb837c
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: sso74-openshift-rhel8-custom
+        pod-template-hash: 844cc65d4f
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftWebConsole
+        creationTimestamp: null
+        labels:
+          app: sso74-openshift-rhel8-custom
+          deploymentconfig: sso74-openshift-rhel8-custom
+          pod-template-hash: 844cc65d4f
+      spec:
+        containers:
+        - env:
+          - name: sso_admin_username
+            value: admin
+          - name: sso_admin_password
+            value: redhat
+          image: image-registry.openshift-image-registry.svc:5000/openshift/sso74-openshift-rhel8-custom@sha256:af2b34d13f26232287c5409382fef5a528c5fc6855df48cf35124553b77f24bf
+          imagePullPolicy: IfNotPresent
+          name: sso74-openshift-rhel8-custom
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          - containerPort: 8443
+            protocol: TCP
+          - containerPort: 8778
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      alpha.image.policy.openshift.io/resolve-names: '*'
+      app.openshift.io/route-disabled: "false"
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+      image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"sso74-openshift-rhel8-custom:7.4","namespace":"openshift"},"fieldPath":"spec.template.spec.containers[?(@.name==\"sso74-openshift-rhel8-custom\")].image","pause":"false"}]'
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: "2022-07-11T12:15:29Z"
+    generation: 2
+    labels:
+      app: sso74-openshift-rhel8-custom
+      deploymentconfig: sso74-openshift-rhel8-custom
+      pod-template-hash: 849b5f6758
+    name: sso74-openshift-rhel8-custom-849b5f6758
+    namespace: test-sso74
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: sso74-openshift-rhel8-custom
+      uid: 3c8eb8de-377d-4073-b305-6fc141b20767
+    resourceVersion: "37707838"
+    uid: bd30f4f5-bef7-465a-b6da-a60ace9364c3
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: sso74-openshift-rhel8-custom
+        pod-template-hash: 849b5f6758
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftWebConsole
+        creationTimestamp: null
+        labels:
+          app: sso74-openshift-rhel8-custom
+          deploymentconfig: sso74-openshift-rhel8-custom
+          pod-template-hash: 849b5f6758
+      spec:
+        containers:
+        - image: image-registry.openshift-image-registry.svc:5000/openshift/sso74-openshift-rhel8-custom@sha256:af2b34d13f26232287c5409382fef5a528c5fc6855df48cf35124553b77f24bf
+          imagePullPolicy: IfNotPresent
+          name: sso74-openshift-rhel8-custom
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          - containerPort: 8443
+            protocol: TCP
+          - containerPort: 8778
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: "2022-07-11T12:15:29Z"
+    labels:
+      app: sso74-openshift-rhel8-custom
+      app.kubernetes.io/component: sso74-openshift-rhel8-custom
+      app.kubernetes.io/instance: sso74-openshift-rhel8-custom
+      app.kubernetes.io/name: sso74-openshift-rhel8-custom
+      app.kubernetes.io/part-of: sso74-openshift-rhel8-custom-app
+    name: sso74-openshift-rhel8-custom
+    namespace: test-sso74
+    resourceVersion: "37707157"
+    uid: 4c52f4f8-6df4-4b3b-aa9f-478c40df262a
+  spec:
+    host: sso74-openshift-rhel8-custom-test-sso74.apps.nonprod-osi.ambg.com.my
+    port:
+      targetPort: 8443-tcp
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+    to:
+      kind: Service
+      name: sso74-openshift-rhel8-custom
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: "2022-07-11T12:15:29Z"
+        status: "True"
+        type: Admitted
+      host: sso74-openshift-rhel8-custom-test-sso74.apps.nonprod-osi.ambg.com.my
+      routerCanonicalHostname: router-default.apps.nonprod-osi.ambg.com.my
+      routerName: default
+      wildcardPolicy: None
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
