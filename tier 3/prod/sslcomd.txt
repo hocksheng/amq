@@ -1,0 +1,1 @@
+openssl req -new -out prod-osi.ambg.com.my.csr -newkey rsa:2048 -nodes -sha256 -keyout prod-osi.ambg.com.my.key -config wildcard-san-prod.conf

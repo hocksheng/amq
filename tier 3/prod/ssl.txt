@@ -1,0 +1,19 @@
+# openssl req -new -out wildcard.nonprod-osi.ambg.com.my.csr -newkey rsa:2048 -nodes -sha256 -keyout wildcard.nonprod-osi.ambg.com.my.key -config wildcard-san.conf
+
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+prompt = no
+[req_distinguished_name]
+C = MY
+ST = Wilayah Persekutuan
+L = Kuala Lumpur
+O = Ambank Berhad
+OU = IT Division
+CN = osi-prod-ops-manager.ambankgroup.com
+[v3_req]
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+[alt_names]
+DNS.1 = osi-prod-ops-manager.ambankgroup.com
